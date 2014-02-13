@@ -1,0 +1,14 @@
+*.db
+*.pyc
+*.log
+settings/me.*
+*.dot
+reports
+ENV
+.DS_Store
+build
+deploy/last-update
+logs/*
+celerybeat.pid
+marc/*
+.gitignore~
