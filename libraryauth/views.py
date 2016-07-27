@@ -8,10 +8,10 @@ from django.contrib.auth import load_backend
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.views.generic.edit import FormView, CreateView, UpdateView, SingleObjectMixin
-from registration.backends.default.views import RegistrationView
+from registration.backends.model_activation.views import RegistrationView
 from . import backends
 from .models import Library
-from .forms import AuthForm, LibraryForm, NewLibraryForm, RegistrationFormNoDisposableEmail
+from .forms import AuthForm, LibraryForm, NewLibraryForm, RegistrationFormNoDisposableEmail, UserData
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ def join_library(request, library_id):
             reverse('bad_library',args=[library.id]), 
         )
 
-def superlogin(request, extra_context=None, **kwargs):
+def superlogin(request, extra_context={}, **kwargs):
     if request.method == 'POST' and request.user.is_anonymous():
         username=request.POST.get("username", "")
         try:
@@ -240,11 +240,29 @@ robot_qs = {
             
 class CustomRegistrationView(RegistrationView):
     form_class = RegistrationFormNoDisposableEmail
-    def form_valid(self, request, form):
-        q =  request.session.get('q', False)
+    def form_valid(self, form):
+        q =  self.request.session.get('q', False)
         if q and q in robot_qs:
             return self.render_to_response({'form':form})
-        return super(CustomRegistrationView,self).form_valid(request, form)
+        return super(CustomRegistrationView,self).form_valid(form)
         
+def edit_user(request, redirect_to=None):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('superlogin'))    
+    form=UserData()
+    if request.method == 'POST': 
+        if 'change_username' in request.POST.keys():
+            form = UserData(request.POST)
+            form.oldusername = request.user.username
+            if form.is_valid(): # All validation rules pass, go and change the username
+                request.user.username=form.cleaned_data['username']
+                request.user.save()
+                if 'set_password'  in request.POST.keys() and form.cleaned_data.has_key('set_password'):
+                    if not request.user.has_usable_password():
+                        request.user.set_password(form.cleaned_data['set_password'])
+                request.user.save()
+                return HttpResponseRedirect(redirect_to if redirect_to else reverse('home')) # Redirect after POST
+    return render(request,'registration/user_change_form.html', {'form': form})  
+
     
     
