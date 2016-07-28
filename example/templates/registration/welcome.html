@@ -1,0 +1,16 @@
+{% extends 'registration/registration_base.html' %}
+
+
+{% block title %}Welcome{% endblock %}
+{% block doccontent %}
+<div id="welcome">
+<p>Welcome, {{user.username}}!</p><p id="link-to-next"></p>
+                        	
+</div>
+<br />
+<div class="welcomealternatives">
+Or you can <a href="{% url 'edit_user' %}">change your username</a> &#151;   &#151; 
+</div>
+{% endblock %}
+
+

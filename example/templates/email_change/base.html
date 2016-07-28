@@ -1,0 +1,16 @@
+{% extends 'registration/registration_base.html' %}
+
+
+
+
+{% block content %}
+{% block ce_content %}{% endblock %}
+
+<div>
+<h2>Other Account Tools</h2>
+<ul>
+<li>Want to <a href="{% url 'auth_password_change' %}">change your password</a>?</li>
+<li>... or <a href="{% url 'edit_user' %}">change your username</a>?</li>
+</ul>
+</div>
+{% endblock %}

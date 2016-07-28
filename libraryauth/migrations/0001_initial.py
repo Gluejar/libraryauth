@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 from django.conf import settings
-import regluit.libraryauth.models
+import libraryauth.models
 
 
 class Migration(migrations.Migration):
@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
             name='Block',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('lower', regluit.libraryauth.models.IPAddressModelField(unique=True, db_index=True)),
-                ('upper', regluit.libraryauth.models.IPAddressModelField(db_index=True, null=True, blank=True)),
+                ('lower', libraryauth.models.IPAddressModelField(unique=True, db_index=True)),
+                ('upper', libraryauth.models.IPAddressModelField(db_index=True, null=True, blank=True)),
             ],
             options={
                 'ordering': ['lower'],
